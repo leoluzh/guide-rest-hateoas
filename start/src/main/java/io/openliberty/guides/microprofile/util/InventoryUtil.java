@@ -16,11 +16,16 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class InventoryUtil {
 
@@ -52,6 +57,19 @@ public class InventoryUtil {
                 .port(PORT)
                 .scheme(PROTOCOL)
                 .build();
+    }
+    
+    public static JsonArray buildLinksForHost( String hostname , String invURI ) {
+    	JsonArrayBuilder links = Json.createArrayBuilder();
+    	links.add( Json.createObjectBuilder()
+    			.add("href", StringUtils.appendIfMissing(invURI,"/") + hostname )
+    			.add("rel", "self"));
+    	if( "*".equals(hostname) ) {
+    		links.add(Json.createObjectBuilder()
+    				.add("href", InventoryUtil.buildUri(hostname).toString())
+    				.add("rel", "properties"));
+    	}
+    	return links.build();
     }
 
 }

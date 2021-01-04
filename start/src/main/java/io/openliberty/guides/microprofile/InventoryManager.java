@@ -75,4 +75,14 @@ public class InventoryManager {
     }
     // end::list[]
 
+    
+    public JsonObject getSystems( String url ) {
+    	JsonObjectBuilder systems = Json.createObjectBuilder();
+    	systems.add("*", InventoryUtil.buildLinksForHost("*",url));
+    	for( String host : inv.keySet() ) {
+    		systems.add( host , InventoryUtil.buildLinksForHost(host,url));
+    	}
+    	return systems.build();
+    }
+    
 }

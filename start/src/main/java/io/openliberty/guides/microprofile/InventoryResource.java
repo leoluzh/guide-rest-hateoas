@@ -19,7 +19,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 
 // tag::header[]
 // tag::cdi-scope[]
@@ -34,25 +36,25 @@ public class InventoryResource {
     InventoryManager manager;
     // end::injection[]
 
+    @Context
+    UriInfo uriInfo;
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public JsonObject handler() {
+    	return manager.getSystems(uriInfo.getAbsolutePath().toString());
+    }
+    
     // tag::getPropertiesForHost[]
     @GET
     @Path("{hostname}")
     @Produces(MediaType.APPLICATION_JSON)
     public JsonObject getPropertiesForHost(@PathParam("hostname") String hostname) {
         // tag::method-contents[]
-        return manager.get(hostname);
+        return ("*".equals(hostname)) ? manager.list() : manager.get(hostname);
         // end::method-contents[]
     }
     // end::getPropertiesForHost[]
 
-    // tag::listContents[]
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject listContents() {
-        // tag::method-contents[]
-        return manager.list();
-        // end::method-contents[]
-    }
-    // end::listContents[]
 
 }
